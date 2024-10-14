@@ -1,0 +1,49 @@
+---
+- name: Update and reboot Linux hosts
+  hosts: all
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_user: ansible_user
+  tasks:
+    - name: Update apt cache (Debian/Ubuntu)
+      become: yes
+      command: apt-get update
+      when: ansible_os_family == "Debian"
+
+    - name: Upgrade all packages (Debian/Ubuntu)
+      become: yes
+      command: apt-get dist-upgrade -y
+      when: ansible_os_family == "Debian"
+
+    - name: Update dnf cache (Red Hat)
+      become: yes
+      command: dnf update
+      when: ansible_os_family == "RedHat"
+
+    - name: Upgrade all packages (Red Hat)
+      become: yes
+      command: dnf upgrade -y
+      when: ansible_os_family == "RedHat"
+
+    - name: Reboot the server
+      become: yes
+      command: reboot
+      async: 1
+      poll: 0
+      ignore_errors: true
+
+    - name: Wait for the server to come back online
+      wait_for_connection:
+        delay: 60
+        timeout: 300
+
+    - name: Clean old files (Debian/Ubuntu)
+      become: yes
+      command: apt-get autoremove -y
+      when: ansible_os_family == "Debian"
+
+    - name: Clean old files (Red Hat)
+      become: yes
+      command: dnf autoremove -y
+      when: ansible_os_family == "RedHat"
