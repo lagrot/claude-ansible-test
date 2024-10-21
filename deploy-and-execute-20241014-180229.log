@@ -1,0 +1,6 @@
+Processing host: 192.168.0.35
+Copying setup-ansible-user.sh to 192.168.0.35
+Executing setup-ansible-user.sh on 192.168.0.35
+Cleaning up temporary files on 192.168.0.35
+Finished processing host: 192.168.0.35
+Deployment and execution completed for all hosts
